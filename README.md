@@ -1,1 +1,1 @@
-# Taller2EstrDatos
+# Johan Piñones - Paralelo C2
