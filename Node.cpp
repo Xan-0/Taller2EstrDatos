@@ -1,35 +1,36 @@
 #include "Node.h"
 
-Node::Node(int value, bool isLast) {
+Node::Node(int value, int fila, int col) {
     this -> value = value;
-    this -> isLast = isLast;
+    this -> fila = fila;
+    this -> col = col;
     next = nullptr;
 }
 
-void Node::setValue(int value){
-    this -> nota = nota;
+void Node::setValue(int value) {
+    this -> value = value;
 }
 
-void Node::setIsLast(bool isLast){
-    this -> isLast = isLast;
-}
-
-void Node::setNext(Node *next){
+void Node::setNext(Node *next) {
     this -> next = next;
 }
 
-int Node::getValue(){
+int Node::getValue() {
     return value;
 }
 
-int Node::isLast(){
-    return isLast;
+int Node::getFila() {
+    return fila;
 }
 
-Node *Node::getNext(){
+int Node::getCol() {
+    return col;
+}
+
+Node *Node::getNext() {
     return next;
 }
 
-Node::~Node(){
+Node::~Node() {
     next = nullptr;
 }
