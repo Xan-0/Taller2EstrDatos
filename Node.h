@@ -3,15 +3,16 @@
 class Node {
     private:
         int value;
-        bool isLast;
+        int fila;
+        int col;
         Node *next;
     public:
-        Node(int value, bool isLast);
+        Node(int value, int fila, int col);
         void setValue(int value);
-        void setIsLast(bool isLast);
         void setNext(Node *next);
         int getValue();
-        bool isLast();
+        int getFila();
+        int getCol();
         Node *getNext();
         ~Node();
 };
