@@ -15,7 +15,7 @@ void SparseMatrix::add(int value, int xPos, int yPos){
     //Si la matriz está vacía
     if(elementos == 0){
         start = new Node(value,xPos,yPos);
-        x = 1; y = 1; elementos = 1; return;
+        x = xPos; y = yPos; elementos = 1; return;
     }
     
     //Si tiene uno o más elementos:
@@ -141,7 +141,7 @@ void SparseMatrix::remove(int xPos, int yPos){
         if(xPos == start -> getFila() && yPos == start -> getCol()){
             delete start;
             start = nullptr;
-            elementos = 0; x= 0; y = 0;
+            elementos = 0; x = 0; y = 0;
         }
         return;
     }
@@ -216,7 +216,7 @@ void SparseMatrix::printStoredValues(){
 
 int SparseMatrix::density(){
     if(elementos == 0) return 0;
-    return elementos/(x*y);
+    return 100*elementos/(x*y);
 }
 
 void SparseMatrix::refreshXY(){
@@ -253,8 +253,9 @@ void SparseMatrix::refreshXY(){
 SparseMatrix* SparseMatrix::multiply(SparseMatrix* second){
     if(y != second -> getX()) cout << "Error, Multiply() con matrices incompatibles." << endl; return nullptr;
     
-    Sparsematrix *nueva = new Sparsematrix();
+    SparseMatrix *nueva = new SparseMatrix();
     Node *cursor1 = start;
+    
     
     return nueva;
 }
