@@ -15,7 +15,10 @@ void SparseMatrix::add(int value, int xPos, int yPos){
     //Si la matriz está vacía
     if(elementos == 0){
         start = new Node(value,xPos,yPos);
-        x = xPos; y = yPos; elementos = 1; return;
+        x = xPos;
+        y = yPos;
+        elementos = 1;
+        return;
     }
     
     //Si tiene uno o más elementos:
@@ -82,15 +85,15 @@ int SparseMatrix::get(int xPos, int yPos){
     
     if(xPos < 1 || yPos < 1){
         cout << "Error, Get() en Posición inválida." << endl;
-        return -1;
+        return 0;
     } else if(xPos > x || yPos > y){
         cout << "Warning, Get() out of index." << endl;
         return 0;
     }
     
     Node *cursor = start;
-    int fila = start -> getFila();
-    int col = start -> getCol();
+    int fila = cursor -> getFila();
+    int col = cursor -> getCol();
     
     //Búsqueda del valor
     while(cursor -> getNext() != nullptr){
@@ -141,7 +144,9 @@ void SparseMatrix::remove(int xPos, int yPos){
         if(xPos == start -> getFila() && yPos == start -> getCol()){
             delete start;
             start = nullptr;
-            elementos = 0; x = 0; y = 0;
+            elementos = 0;
+            x = 0;
+            y = 0;
         }
         return;
     }
@@ -220,8 +225,8 @@ int SparseMatrix::density(){
 }
 
 void SparseMatrix::refreshXY(){
-    if(elementos == 0) x = 0; y = 0; return;
-    if(elementos == 1) x = start -> getFila(); y = start -> getCol(); return;
+    if(elementos == 0) {x = 0; y = 0; return;}
+    if(elementos == 1) {x = start -> getFila(); y = start -> getCol(); return;}
     
     //Si hay 2 o más elementos
     Node *cursor = start;
@@ -251,11 +256,30 @@ void SparseMatrix::refreshXY(){
 
 // (nxm) * (pxq) -> (nxq)
 SparseMatrix* SparseMatrix::multiply(SparseMatrix* second){
-    if(y != second -> getX()) cout << "Error, Multiply() con matrices incompatibles." << endl; return nullptr;
+    if(elementos == 0) {cout << "Error, Multiply() con matriz o matrices vacías." << endl; return nullptr;}
+    if(y != second -> getX()) {cout << "Error, Multiply() con matrices incompatibles." << endl; return nullptr;}
     
     SparseMatrix *nueva = new SparseMatrix();
-    Node *cursor1 = start;
+    int val = 0;
+    int val1 = 0;
+    int val2 = 0;
     
+    for(int i = 1; i <= x; ++i){ //fila1
+        for(int j = 1; j <= second -> getY(); ++j){ //col2
+            for(int k = 1; k <= y; ++k){ //col1
+                
+                val1 = get(i,k);
+                val2 = second -> get(k,j);
+                val += val1 * val2;
+                cout << val1 << " * " << val2 << " = " << val << endl;
+                
+            }
+            if(val != 0){
+                nueva -> add(val,i,j);
+                val = 0;
+            }
+        }
+    }
     
     return nueva;
 }
