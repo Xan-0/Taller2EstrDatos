@@ -1,9 +1,7 @@
 #include "SparseMatrix.h"
 
 SparseMatrix::SparseMatrix(){ //No se agregan nodos para valores 0
-    x = 0;
-    y = 0;
-    elementos = 0;
+    start = nullptr;
 }
 
 void SparseMatrix::add(int value, int xPos, int yPos){
@@ -11,20 +9,18 @@ void SparseMatrix::add(int value, int xPos, int yPos){
         cout << "Error, Add() en Posición inválida." << endl;
         return;
     }
+    if(value == 0){
+        cout << "Error, intento de añadir valor 0." << endl;
+        return;
+    }
     
     //Si la matriz está vacía
-    if(elementos == 0){
+    if(start == nullptr){
         start = new Node(value,xPos,yPos);
-        x = xPos;
-        y = yPos;
-        elementos = 1;
         return;
     }
     
     //Si tiene uno o más elementos:
-    if(xPos > x) x = xPos;
-    if(yPos > y) y = yPos;
-    
     Node *cursor = start;
     Node *anterior = start;
     int fila = start -> getFila();
@@ -34,7 +30,6 @@ void SparseMatrix::add(int value, int xPos, int yPos){
         cursor = new Node(value,xPos,yPos);
         cursor -> setNext(start);
         start = cursor;
-        elementos++;
         return;
     } else if(yPos == col && xPos == fila){ //Si está en start
         cout << "Error, Add() en Posición ya ocupada." << endl;
@@ -49,7 +44,6 @@ void SparseMatrix::add(int value, int xPos, int yPos){
     //Si llegó al final de la matriz
     if(cursor -> getNext() == nullptr){
         cursor -> setNext(new Node(value,xPos,yPos));
-        elementos++;
         return;
     }
     //Si llegó a la fila
@@ -68,7 +62,6 @@ void SparseMatrix::add(int value, int xPos, int yPos){
         }
         if(cursor -> getNext() == nullptr){ //Si llegó al final de la matriz
             cursor -> setNext(new Node(value,xPos,yPos));
-            elementos++;
             return;
         }
         
@@ -76,22 +69,51 @@ void SparseMatrix::add(int value, int xPos, int yPos){
     //En otro caso (la fila y/o columna de cursor es mayor a la de xPos y/o yPos)
     anterior -> setNext(new Node(value,xPos,yPos));
     anterior -> getNext() -> setNext(cursor);
-    elementos++;
     return;
 }
 
+//Excepciones: (-1,-1) = x, (-2,-2) = y, (-3,-3) = elementos
 int SparseMatrix::get(int xPos, int yPos){
-    if(elementos == 0) return 0;
+    if(start == nullptr) return 0;
+    
+    int elementos = 1;
+    int x = 0;
+    int y = 0;
+    Node *cursor = start;
+    
+    if(start -> getNext() == nullptr){
+        x = start -> getFila();
+        y = start -> getCol();
+        if(xPos == -1 && yPos == -1) return x;
+        if(xPos == -2 && yPos == -2) return y;
+        if(xPos == -3 && yPos == -3) return elementos;
+    }
+    
+    while(cursor -> getNext() != nullptr){
+        
+        elementos++;
+        if(cursor -> getFila() > x) x = cursor -> getFila();
+        if(cursor -> getCol() > y) y = cursor -> getCol();
+        
+        cursor = cursor -> getNext();
+    }
+    if(cursor -> getFila() > x) x = cursor -> getFila();
+    if(cursor -> getCol() > y) y = cursor -> getCol();
+    
+    if(xPos == -1 && yPos == -1) return x;
+    if(xPos == -2 && yPos == -2) return y;
+    if(xPos == -3 && yPos == -3) return elementos;
     
     if(xPos < 1 || yPos < 1){
         cout << "Error, Get() en Posición inválida." << endl;
         return 0;
-    } else if(xPos > x || yPos > y){
+    }
+    if(xPos > x || yPos > y){
         cout << "Warning, Get() out of index." << endl;
         return 0;
     }
     
-    Node *cursor = start;
+    cursor = start;
     int fila = cursor -> getFila();
     int col = cursor -> getCol();
     
@@ -114,25 +136,14 @@ int SparseMatrix::get(int xPos, int yPos){
     return 0;
 }
 
-int SparseMatrix::getX(){
-    return x;
-}
-
-int SparseMatrix::getY(){
-    return y;
-}
-
-int SparseMatrix::getElementos(){
-    return elementos;
-}
-
 void SparseMatrix::remove(int xPos, int yPos){
-    if(elementos == 0) return;
+    if(start == nullptr) return;
     
     if(xPos < 1 || yPos < 1){
         cout << "Error, Remove() en Posición inválida." << endl;
         return;
-    } else if(xPos > x || yPos > y){
+    }
+    if(xPos > get(-1,-1) || yPos > get(-2,-2)){
         cout << "Error, Remove() out of index." << endl;
         return;
     }
@@ -140,13 +151,10 @@ void SparseMatrix::remove(int xPos, int yPos){
     Node *aux = nullptr;
     
     //Si hay un elemento y se quiere eliminar a start
-    if(elementos == 1){
+    if(start -> getNext() == nullptr){
         if(xPos == start -> getFila() && yPos == start -> getCol()){
             delete start;
             start = nullptr;
-            elementos = 0;
-            x = 0;
-            y = 0;
         }
         return;
     }
@@ -155,8 +163,6 @@ void SparseMatrix::remove(int xPos, int yPos){
         aux = start -> getNext();
         delete start;
         start = aux;
-        elementos--;
-        refreshXY();
         return;
     }
     
@@ -174,7 +180,6 @@ void SparseMatrix::remove(int xPos, int yPos){
             anterior -> setNext(aux);
             
             cursor = nullptr;
-            elementos--;
             return;
         }
         
@@ -188,9 +193,6 @@ void SparseMatrix::remove(int xPos, int yPos){
         anterior -> setNext(nullptr);
         delete cursor;
         cursor = nullptr;
-        
-        elementos--;
-        refreshXY();
         return;
     }
     
@@ -204,7 +206,7 @@ void SparseMatrix::printStoredValues(){
     
     cout << "(fila, columna) --> Valor" << endl;
     
-    if(elementos == 1){
+    if(start -> getNext() == nullptr){
         cout << "(" << start -> getFila() << ", " << start -> getCol() << ") --> " << start -> getValue() << endl;
         return;
     }
@@ -220,53 +222,33 @@ void SparseMatrix::printStoredValues(){
 }
 
 int SparseMatrix::density(){
-    if(elementos == 0) return 0;
+    if(start == nullptr) return 0;
+    int x = get(-1,-1);
+    int y = get(-2,-2);
+    int elementos = get(-3,-3);
+    
     return 100*elementos/(x*y);
-}
-
-void SparseMatrix::refreshXY(){
-    if(elementos == 0) {x = 0; y = 0; return;}
-    if(elementos == 1) {x = start -> getFila(); y = start -> getCol(); return;}
-    
-    //Si hay 2 o más elementos
-    Node *cursor = start;
-    int filaMayor = 0;
-    int colMayor = 0;
-    
-    while(cursor -> getNext() != nullptr){
-        if(cursor -> getFila() > filaMayor){
-            filaMayor = cursor -> getFila();
-        }
-        if(cursor -> getCol() > colMayor){
-            colMayor = cursor -> getCol();
-        }
-        cursor = cursor -> getNext();
-    }
-    if(cursor -> getFila() > filaMayor){
-        filaMayor = cursor -> getFila();
-    }
-    if(cursor -> getCol() > colMayor){
-        colMayor = cursor -> getCol();
-    }
-    
-    x = filaMayor;
-    y = colMayor;
-    return;
 }
 
 // (nxm) * (pxq) -> (nxq)
 SparseMatrix* SparseMatrix::multiply(SparseMatrix* second){
-    if(elementos == 0) {cout << "Error, Multiply() con matriz o matrices vacías." << endl; return nullptr;}
-    if(y != second -> getX()) {cout << "Error, Multiply() con matrices incompatibles." << endl; return nullptr;}
+    if(start == nullptr || second -> density() == 0) {cout << "Error, Multiply() con matriz o matrices vacías." << endl; return nullptr;}
+    
+    int x1 = get(-1,-1);
+    int y1 = get(-2,-2);
+    int x2 = second -> get(-1,-1);
+    int y2 = second -> get(-2,-2);
+    
+    if(y1 != x2) {cout << "Error, Multiply() con matrices incompatibles." << endl; return nullptr;}
     
     SparseMatrix *nueva = new SparseMatrix();
     int val = 0;
     int val1 = 0;
     int val2 = 0;
     
-    for(int i = 1; i <= x; ++i){ //fila1
-        for(int j = 1; j <= second -> getY(); ++j){ //col2
-            for(int k = 1; k <= y; ++k){ //col1
+    for(int i = 1; i <= x1; ++i){ //fila1
+        for(int j = 1; j <= y2; ++j){ //col2
+            for(int k = 1; k <= y1; ++k){ //col1
                 
                 val1 = get(i,k);
                 val2 = second -> get(k,j);
@@ -285,9 +267,9 @@ SparseMatrix* SparseMatrix::multiply(SparseMatrix* second){
 }
 
 SparseMatrix::~SparseMatrix(){
-    if(elementos == 0) return;
+    if(start == nullptr) return;
     
-    if(elementos == 1){
+    if(start -> getNext() == nullptr){
         delete start;
         start = nullptr;
         return;
