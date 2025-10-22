@@ -1,20 +1,16 @@
 #pragma once
-#include <iostream>
 #include "Node.h"
-using namespace std;
 
 /**
  * @class SparseMatrix
- * @brief Representa una Matriz Poco Poblada con x Filas e Y Columnas.
+ * @brief Representa una Matriz Poco Poblada formada con Nodos organizados en filas y columnas.
  * 
- * Está clase contiene métodos
+ * Está clase contiene métodos de agregación, obtención, eliminación, impresión de valores no nulos guardados y multiplicación
  */
 class SparseMatrix {
     private:
         Node* start;
-        int x;
-        int y;
-        int elementos;
+        
     public:
         /**
         * @brief Crea una Matriz Poco Poblada.
@@ -35,24 +31,14 @@ class SparseMatrix {
          */
         int get(int xPos, int yPos);
         /**
-         * @brief Obtiene la cantidad de Filas de la Matriz.
-         * @return La cantidad de filas de la Matriz.
-         */
-        int getX();
-        /**
-         * @brief Obtiene la cantidad de Columnas de la Matriz.
-         * @return La cantidad de Columnas de la Matriz.
-         */
-        int getY();
-        /**
-         * @brief Obtiene la cantidad de Elementos no nulos de la Matriz.
-         * @return La cantidad de Elementos no nulos de la Matriz.
-         */
-        int getElementos();
-        /**
          * @brief Elimina un elemento de la Matriz en la posición.
          * @param xPos Fila en la que se encuentra el valor a eliminar.
          * @param yPos Columna en la que se encuentra el valor a eliminar.
+         * 
+         * Excepciones de entrada: al ingresar ciertos datos específicos obtienes atributos
+         * de la Matriz, como: al ingresar (-1,-1) obtienes las filas, con (-2,-2) obtienes
+         * las columnas, y al ingresar (-3,-3) obtienes la cantidad de elementos no nulos
+         * de la Matriz.
          */
         void remove(int xPos, int yPos);
         /**
@@ -66,12 +52,6 @@ class SparseMatrix {
         int density();
         /**
          * @brief Refresca las dimensiones (Filas, Columnas) de la Matriz, dados los nodos más alejados de start.
-         */
-        void refreshXY();
-        /**
-         * @brief Multiplica esta Matriz por una segunda Matriz.
-         * @param second La segunda Matriz a multiplicar.
-         * @return La Matriz resultante de la multiplicación.
          */
         SparseMatrix* multiply(SparseMatrix* second);
         /**
