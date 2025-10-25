@@ -18,27 +18,29 @@ class SparseMatrix {
         */
         SparseMatrix();
         /**
-         * @brief Añade un valor a la Matriz.
+         * @brief Añade un valor a la Matriz en la posición indicada.
          * @param value Valor que se guardará en la posición.
          * @param xPos Fila en la que se guardará el valor.
          * @param yPos Columna en la que se guardará el valor.
          */
-         
         void add(int value, int xPos, int yPos);
         /**
          * @brief Obtiene un valor de la Matriz.
          * @param xPos Fila en la que se encuentra el valor.
+         * @param yPos Columna en la que se encuentra el valor.
+         * @return el valor en la posición indicada.
+         * 
+         * Excepciones de entrada: al ingresar ciertos datos específicos obtienes atributos
+         * de la Matriz, como: al ingresar (-1,-1) obtienes las filas, con (-2,-2) obtienes
+         * las columnas, con (-3,-3) obtienes la cantidad de elementos no nulos
+         * de la Matriz, con (-4,-4) obtienes la fila en la que se encuentra el primer valor
+         * no nulo (start), y con (-5,-5) la columna en la que se encuentra.
          */
         int get(int xPos, int yPos);
         /**
          * @brief Elimina un elemento de la Matriz en la posición.
          * @param xPos Fila en la que se encuentra el valor a eliminar.
          * @param yPos Columna en la que se encuentra el valor a eliminar.
-         * 
-         * Excepciones de entrada: al ingresar ciertos datos específicos obtienes atributos
-         * de la Matriz, como: al ingresar (-1,-1) obtienes las filas, con (-2,-2) obtienes
-         * las columnas, y al ingresar (-3,-3) obtienes la cantidad de elementos no nulos
-         * de la Matriz.
          */
         void remove(int xPos, int yPos);
         /**
@@ -51,7 +53,9 @@ class SparseMatrix {
          */
         int density();
         /**
-         * @brief Refresca las dimensiones (Filas, Columnas) de la Matriz, dados los nodos más alejados de start.
+         * @brief Elimina la Matriz actual.
+         * @param second La segunda matriz con la que se multiplicará la actual.
+         * @return una nueva Matriz que es la resultante de la multiplicación.
          */
         SparseMatrix* multiply(SparseMatrix* second);
         /**
