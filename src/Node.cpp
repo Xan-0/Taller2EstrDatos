@@ -1,4 +1,4 @@
-#include "Node.h"
+#include "..\include\Node.h"
 
 Node::Node(int value, int fila, int col) {
     this -> value = value;
