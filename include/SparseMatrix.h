@@ -53,7 +53,7 @@ class SparseMatrix {
          */
         int density();
         /**
-         * @brief Elimina la Matriz actual.
+         * @brief Multiplica la Matriz actual con otra Matriz de entrada.
          * @param second La segunda matriz con la que se multiplicará la actual.
          * @return una nueva Matriz que es la resultante de la multiplicación.
          */
@@ -63,3 +63,4 @@ class SparseMatrix {
          */
         ~SparseMatrix();
 };
+
